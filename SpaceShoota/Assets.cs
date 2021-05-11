@@ -3,12 +3,15 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Audio;
+using RC_Framework;
 
 namespace SpaceShoota
 {
 
     public static class Assets
     {
+        //boolean
+        public static bool closeGame;
 
         public static int score = 0;
         public static int currentLevel = 0;
@@ -16,6 +19,9 @@ namespace SpaceShoota
         // Textures
         public static Texture2D texHelp;
         public static Texture2D texContinue;
+        public static Texture2D texMenu;
+        public static Texture2D texExit;
+        public static Texture2D texBack;
 
         // Fonts
         public static SpriteFont fonty;
@@ -30,18 +36,23 @@ namespace SpaceShoota
         public static Color LvlTwoColour;
         public static Color LvlThreeColour;
 
-        // Strings
-
-        public static string title;
-
+        //Strings
+        public static string dir;
         //Sounds
         public static SoundEffect soundSelect;
 
-        public static void LoadContent(ContentManager content)
+        public static void LoadContent(ContentManager Content)
         {
+
+            
+
+            closeGame = false;
             // Load Textures
-            texHelp = content.Load<Texture2D>("Help");
-            texHelp = content.Load<Texture2D>("Continue");
+            texHelp = Content.Load<Texture2D>("Help");
+            texMenu = Content.Load<Texture2D>("Menu");
+            texContinue = Content.Load<Texture2D>("Continue");
+            texExit = Content.Load<Texture2D>("Exit");
+            texBack = Content.Load<Texture2D>("Back");
 
             // Load Colours
             StartScreenColour = new Color(216, 182, 227);
@@ -54,13 +65,10 @@ namespace SpaceShoota
             LvlThreeColour = new Color(136, 15, 199);
 
             //Load Font
-            //fonty = content.Load<SpriteFont>("arialHeading");
+            fonty = Content.Load<SpriteFont>("arialHeading");
 
-            //Load Sound
-            //soundSelect = content.Load<SoundEffect>("vgmenuselect");
 
-            // Load Titles
-            title = "SPACE SHOOTA";
+
 
         }
     }

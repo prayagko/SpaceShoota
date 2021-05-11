@@ -9,13 +9,16 @@ namespace SpaceShoota
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch spriteBatch;
-        public static bool closeGame;
+        
         public static RC_GameStateManager levelManager;
 
 
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
+            _graphics.PreferredBackBufferHeight = 600;
+            _graphics.PreferredBackBufferWidth = 800;
+
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -67,7 +70,8 @@ namespace SpaceShoota
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (closeGame == true) Exit();
+            if (Assets.closeGame == true) Exit();
+
 
             // TODO: Add your update logic here
 
@@ -81,6 +85,7 @@ namespace SpaceShoota
             GraphicsDevice.Clear(Assets.StartScreenColour);
 
             // TODO: Add your drawing code here
+
 
             levelManager.getCurrentLevel().Draw(gameTime);
 

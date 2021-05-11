@@ -15,21 +15,11 @@ namespace SpaceShoota
     {
         public static string dir = Directory.GetCurrentDirectory();
 
-
+        
 
         public static void handleLevelHotKeys(RC_GameStateManager gameStateManager, int nextLevel)
         {
-            // Handle Help Button
-            if (Input.KeyOldPressed(Keys.H))
-                gameStateManager.pushLevel(4);
 
-            // Handle Pausing
-            if (Input.KeyPressed(Keys.P))
-                gameStateManager.pushLevel(3);
-
-            // skip Level
-            if (Input.KeyPressed(Keys.N))
-                gameStateManager.setLevel(nextLevel);
         }
 
         public static void handleLevelUpdate(GameTime gameTime, RC_GameStateManager gameStateManager, int nxtLevel)
@@ -74,6 +64,12 @@ namespace SpaceShoota
             // Handle input
             Input.Update();
 
+            // skip Level
+            if (Input.KeyOldPressed(Keys.N) && Assets.currentLevel == 0)
+                gameStateManager.setLevel(1);
+
+            if (Input.KeyOldPressed(Keys.P))
+                gameStateManager.pushLevel(3);
 
             // Update our level with modified variables pertaining to our play level
             Levels.handleLevelUpdate(gameTime, gameStateManager, 1);
@@ -110,6 +106,10 @@ namespace SpaceShoota
         {
             // Handle our player input
             Input.Update();
+
+            if (Input.KeyOldPressed(Keys.P))
+                gameStateManager.pushLevel(3);
+
             // Update our level with modified variables pertaining to our play level
             Levels.handleLevelUpdate(gameTime, gameStateManager, 2);
 
@@ -132,13 +132,25 @@ namespace SpaceShoota
     class StartScreen : RC_GameStateParent
     {
 
-        private Texture2D texTitle, texPlay, texHelp;
-        private Sprite3 sTitle;
-
+        private Texture2D texStartBG, texTitle, texPlay;
+        private Sprite3 sTitle, sPlay, sHelp, sExit;
+        bool test;
 
         public override void LoadContent()
         {
+            texStartBG = Content.Load<Texture2D>("menu-bg");
+            texTitle = Content.Load < Texture2D>("Title");
+            texPlay = Content.Load<Texture2D>("Play");
 
+            sTitle = new Sprite3(true, texTitle, 180, 100); sTitle.setWidthHeight(440, 130);
+            sPlay = new Sprite3(true, texPlay, 50, 300); sPlay.setWidthHeight(200, 73);
+            
+  
+            sHelp = new Sprite3(true, Assets.texHelp, 310, 300); sHelp.setWidthHeight(200, 80);
+
+            
+            sExit = new Sprite3(true, Assets.texExit, 550, 300); sExit.setWidthHeight(200, 80);
+                
 
         }
 
@@ -160,16 +172,26 @@ namespace SpaceShoota
         {
 
             Input.Update();
-
+            if(Utility.spriteClicked(sPlay)) gameStateManager.setLevel(0);
+            if (Utility.spriteClicked(sHelp)) gameStateManager.setLevel(4);
+            if (Utility.spriteClicked(sExit))
+            {
+                Assets.closeGame = true;
+            }
             Levels.handleLevelUpdate(gameTime, gameStateManager, 0);
 
         }
 
         public override void Draw(GameTime gameTime)
         {
-            graphicsDevice.Clear(Assets.StartScreenColour);
 
             spriteBatch.Begin(SpriteSortMode.Deferred);
+            spriteBatch.Draw(texStartBG, new Vector2(0, 0), Color.White);
+            sTitle.draw(spriteBatch);
+            sPlay.draw(spriteBatch);
+            sHelp.draw(spriteBatch);
+            sExit.draw(spriteBatch);
+            
 
             spriteBatch.End();
         }
@@ -214,18 +236,24 @@ namespace SpaceShoota
     class LevelHelp : RC_GameStateParent
     {
 
+        private Texture2D texHelpBG, texHelpBack, texControls;
+        private Sprite3 spBack;
 
         public override void LoadContent()
         {
+            texHelpBG = Content.Load<Texture2D>("help-bg");
+            texControls = Content.Load<Texture2D>("howto");
+            texHelpBack = Content.Load<Texture2D>("help-back");
+            spBack = new Sprite3(true, texHelpBack, 10, 20); spBack.setWidthHeight(80, 80);
 
         }
 
         public override void Update(GameTime gameTime)
         {
             Input.Update();
-
-            if (Input.KeyPressed(Keys.Space))
-                gameStateManager.popLevel();
+            
+            if (Utility.spriteClicked(spBack))
+                gameStateManager.setLevel(2);
         }
 
         public override void Draw(GameTime gameTime)
@@ -237,6 +265,9 @@ namespace SpaceShoota
             spriteBatch.Begin();
 
 
+            spriteBatch.Draw(texHelpBG, new Vector2(0,0), Color.White);
+            spriteBatch.Draw(texControls, new Vector2(290, 50), Color.White);
+            spBack.Draw(spriteBatch);
             spriteBatch.End();
 
         }
@@ -244,6 +275,7 @@ namespace SpaceShoota
 
     class LevelGameOver : RC_GameStateParent
     {
+
         private int timeWaitTicks = 50;
         private int timeWaitCurrent = 0;
 
