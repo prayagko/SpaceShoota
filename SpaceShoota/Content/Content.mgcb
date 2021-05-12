@@ -32,6 +32,18 @@
 /processorParam:TextureFormat=Color
 /build:Back.png
 
+#begin bg-music.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:bg-music.mp3
+
+#begin buttonClick.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:buttonClick.wav
+
 #begin Continue.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -91,6 +103,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:help-bg.png
+
+#begin help-music.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:help-music.mp3
 
 #begin howto.png
 /importer:TextureImporter

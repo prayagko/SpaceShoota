@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 using RC_Framework;
 
 namespace SpaceShoota
@@ -35,11 +36,12 @@ namespace SpaceShoota
         public static Color LvlOneColour;
         public static Color LvlTwoColour;
         public static Color LvlThreeColour;
-
         //Strings
         public static string dir;
         //Sounds
         public static SoundEffect soundSelect;
+        public static Song mainMusic;
+        public static Song helpMusic;
 
         public static void LoadContent(ContentManager Content)
         {
@@ -68,7 +70,10 @@ namespace SpaceShoota
             fonty = Content.Load<SpriteFont>("arialHeading");
 
 
+            soundSelect = Content.Load<SoundEffect>("buttonClick");
 
+            mainMusic = Content.Load<Song>("bg-music");
+            helpMusic = Content.Load<Song>("help-music");
 
         }
     }

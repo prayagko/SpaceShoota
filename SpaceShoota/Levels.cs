@@ -17,10 +17,6 @@ namespace SpaceShoota
 
         
 
-        public static void handleLevelHotKeys(RC_GameStateManager gameStateManager, int nextLevel)
-        {
-
-        }
 
         public static void handleLevelUpdate(GameTime gameTime, RC_GameStateManager gameStateManager, int nxtLevel)
         {
@@ -30,7 +26,7 @@ namespace SpaceShoota
             //    gameStateManager.setLevel(nxtLvl);
             //}
 
-            Levels.handleLevelHotKeys(gameStateManager, nxtLevel);
+           
 
 
 
@@ -48,8 +44,6 @@ namespace SpaceShoota
 
         public override void InitializeLevel(GraphicsDevice g, SpriteBatch s, ContentManager c, RC_GameStateManager lm)
         {
-
-
             base.InitializeLevel(g, s, c, lm);
         }
 
@@ -134,15 +128,26 @@ namespace SpaceShoota
 
         private Texture2D texStartBG, texTitle, texPlay;
         private Sprite3 sTitle, sPlay, sHelp, sExit;
-        bool test;
+
+        private static Song music;
+
+
+        private bool moveUp = true;
 
         public override void LoadContent()
         {
             texStartBG = Content.Load<Texture2D>("menu-bg");
+            
+            
             texTitle = Content.Load < Texture2D>("Title");
             texPlay = Content.Load<Texture2D>("Play");
 
+        
+
             sTitle = new Sprite3(true, texTitle, 180, 100); sTitle.setWidthHeight(440, 130);
+            sTitle.savePosition();
+
+
             sPlay = new Sprite3(true, texPlay, 50, 300); sPlay.setWidthHeight(200, 73);
             
   
@@ -150,7 +155,9 @@ namespace SpaceShoota
 
             
             sExit = new Sprite3(true, Assets.texExit, 550, 300); sExit.setWidthHeight(200, 80);
-                
+
+
+           
 
         }
 
@@ -170,12 +177,34 @@ namespace SpaceShoota
 
         public override void Update(GameTime gameTime)
         {
+            // experimenting with moving the title back and forth at different speeds to see to see what it looks like
+            if (sTitle.getPosX()>sTitle.savePos.X + 1 || sTitle.getPosX() < sTitle.savePos.X - 1)
+            {
+                moveUp = !moveUp;
+
+            }
+
+            if (moveUp) sTitle.moveByDeltaXY(new Vector2(1, -1));
+
+            else sTitle.moveByDeltaXY(new Vector2(-1, 1));
+
+
 
             Input.Update();
-            if(Utility.spriteClicked(sPlay)) gameStateManager.setLevel(0);
-            if (Utility.spriteClicked(sHelp)) gameStateManager.setLevel(4);
+            if (Utility.spriteClicked(sPlay))
+            {
+                Utility.buttonClickSound();
+                gameStateManager.setLevel(0);
+            }
+            if (Utility.spriteClicked(sHelp))
+            {
+                Utility.buttonClickSound();
+                gameStateManager.setLevel(4);
+                
+            }
             if (Utility.spriteClicked(sExit))
             {
+                Utility.buttonClickSound();
                 Assets.closeGame = true;
             }
             Levels.handleLevelUpdate(gameTime, gameStateManager, 0);
@@ -251,9 +280,12 @@ namespace SpaceShoota
         public override void Update(GameTime gameTime)
         {
             Input.Update();
-            
+
             if (Utility.spriteClicked(spBack))
+            {
+                Utility.buttonClickSound();
                 gameStateManager.setLevel(2);
+            }
         }
 
         public override void Draw(GameTime gameTime)
@@ -282,6 +314,7 @@ namespace SpaceShoota
         public override void EnterLevel(int fromLevelNum)
         {
             timeWaitCurrent = timeWaitTicks;
+            
 
             Assets.currentLevel = 0;
         }

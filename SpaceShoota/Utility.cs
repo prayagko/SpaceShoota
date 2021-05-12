@@ -1,7 +1,7 @@
 ﻿using System;
 using RC_Framework;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+using Microsoft.Xna.Framework.Audio;
 
 
 namespace SpaceShoota
@@ -23,6 +23,23 @@ namespace SpaceShoota
 
         }
 
+
+        public static void buttonClickSound() {
+
+            Assets.soundSelect.Play();
+        }
+
+
+        public static int randInt(int minNumber, int maxNumber)
+        {
+            return new Random().Next(minNumber, maxNumber);
+        }
+
+
+        public static float randFloat(float minNumber, float maxNumber)
+        {
+            return (float)new Random().NextDouble() * (maxNumber - minNumber) + minNumber;
+        }
 
     }
 }

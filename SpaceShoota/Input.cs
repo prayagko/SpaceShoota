@@ -92,16 +92,6 @@ namespace SpaceShoota
         }
 
 
-        public static Vector2 getMouseDirection(Vector2 relative)
-        {
-            Vector2 dir = mousePosition - relative;
-
-            if (dir == Vector2.Zero)
-                return Vector2.Zero;
-            else
-                return Vector2.Normalize(dir);
-        }
-
 
         public static bool KeyPressed(Keys key)
         {
