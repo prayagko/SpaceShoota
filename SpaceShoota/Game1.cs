@@ -13,6 +13,7 @@ namespace SpaceShoota
         
         public static RC_GameStateManager levelManager;
 
+        public static Vector2 screenSize = new Vector2(800, 600);
 
 
         public Game1()
@@ -50,12 +51,15 @@ namespace SpaceShoota
 
             levelManager.AddLevel(0, new LevelOne());
             levelManager.getLevel(0).InitializeLevel(GraphicsDevice, spriteBatch, Content, levelManager);
+            levelManager.getLevel(0).LoadContent();
 
             levelManager.AddLevel(1, new LevelTwo());
             levelManager.getLevel(1).InitializeLevel(GraphicsDevice, spriteBatch, Content, levelManager);
+            levelManager.getLevel(1).LoadContent();
 
             levelManager.AddLevel(2, new StartScreen());
             levelManager.getLevel(2).InitializeLevel(GraphicsDevice, spriteBatch, Content, levelManager);
+            levelManager.getLevel(2).LoadContent();
 
             levelManager.AddLevel(3, new LevelPause());
             levelManager.getLevel(3).InitializeLevel(GraphicsDevice, spriteBatch, Content, levelManager);

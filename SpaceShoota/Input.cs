@@ -45,20 +45,6 @@ namespace SpaceShoota
                 return false;
         }
 
-        public static bool anyOldMousePressed()
-        {
-            if (mState.LeftButton == ButtonState.Released && prevmState.LeftButton == ButtonState.Pressed)
-                return true;
-
-            if (mState.MiddleButton == ButtonState.Released && prevmState.MiddleButton == ButtonState.Pressed)
-                return true;
-
-            if (mState.RightButton == ButtonState.Released && prevmState.RightButton == ButtonState.Pressed)
-                return true;
-
-            return false;
-        }
-
 
         public static bool anyPressed()
         {

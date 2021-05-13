@@ -1,9 +1,9 @@
 ﻿using System;
 namespace SpaceShoota
 {
-    public class SpriteAnimation
+    public class Hunter
     {
-        public SpriteAnimation()
+        public Hunter()
         {
         }
     }

@@ -8,55 +8,51 @@ using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Content;
 using System.IO;
 using Microsoft.Xna.Framework.Audio;
+using System.Collections.Generic;
+using System.Linq;
+
 
 namespace SpaceShoota
 {
     public class Levels
     {
-        public static string dir = Directory.GetCurrentDirectory();
-
-        
-
-
-        public static void handleLevelUpdate(GameTime gameTime, RC_GameStateManager gameStateManager, int nxtLevel)
-        {
-
-            //if (Resources.score > scoreReq)
-            //{
-            //    gameStateManager.setLevel(nxtLvl);
-            //}
-
-           
-
-
-
-        }
-
-
-        public static void handleLevelBasicDrawing(SpriteBatch spriteBatch, int ticksRemaining)
-        {
-
-        }
+       
     }
 
     class LevelOne : RC_GameStateParent
+
     {
+        public bool showbb = false;
+        public Player player;
+
+        public List<EnemyShip> enemyShipList = new List<EnemyShip>();
+
+        private List<Bullet> bullets = new List<Bullet>();
+        private List<Bullet> enemyBullets = new List<Bullet>();
 
         public override void InitializeLevel(GraphicsDevice g, SpriteBatch s, ContentManager c, RC_GameStateManager lm)
         {
+
             base.InitializeLevel(g, s, c, lm);
         }
 
-        public override void EnterLevel(int fromLevelNum)
+        public override void LoadContent()
         {
-
-            Assets.currentLevel = 0;
+            player = new Player(Assets.texShip, new Vector2(200, 250));
+            enemyShipList = Utility.makeEnemyShipList(4);
         }
 
+        public int coolDownTick = 15;
+
+        public int largeCoolDownTick = 50;
         public override void Update(GameTime gameTime)
         {
+            coolDownTick--;
+            largeCoolDownTick--;
             // Handle input
             Input.Update();
+
+            if (Input.KeyOldPressed(Keys.B)) showbb = !showbb;
 
             // skip Level
             if (Input.KeyOldPressed(Keys.N) && Assets.currentLevel == 0)
@@ -65,18 +61,133 @@ namespace SpaceShoota
             if (Input.KeyOldPressed(Keys.P))
                 gameStateManager.pushLevel(3);
 
-            // Update our level with modified variables pertaining to our play level
-            Levels.handleLevelUpdate(gameTime, gameStateManager, 1);
+
+            if (Input.KeyOldPressed(Keys.Space))
+            {
+                if (coolDownTick < 1)
+
+                {
+                    coolDownTick = 15;
+                    Assets.soundLaser.Play();
+                    Bullet bullet = new Bullet(Assets.texPlayerBullet, new Vector2(player.position.X, player.position.Y + player.getNewSize().Y / 2), 8);
+                    bullets.Add(bullet);
+
+                }
+            }
+
+
+            for (int i = 0; i < bullets.Count; i++)
+            {
+                bullets[i].Update();
+
+
+                if (bullets[i].getSprite().getPosX() > 800)
+                {
+                    bullets.Remove(bullets[i]);
+                    continue;
+                }
+            }
+
+
+
+            player.Update();
+
+
+            for (int i = 0; i < enemyBullets.Count; i++)
+            {
+
+
+                if (player.getSprite().collision(enemyBullets[i].getSprite()))
+                {
+                    //sndExplode[randInt(0, sndExplode.Count - 1)].Play();
+                    //Explosion explosion = new Explosion(texExplosion, new Vector2(player.position.X + player.destOrigin.X, player.position.Y + player.destOrigin.Y));
+                    //explosions.Add(explosion);
+                    Assets.soundPlayerHit.Play();
+                    if (enemyBullets.Any())
+                    {
+                        enemyBullets.Remove(enemyBullets[i]);
+                    }
+
+                    player.takeDamage(1);
+
+                }
+            }
+
+            for (int i = 0; i < enemyBullets.Count; i++)
+            {
+                enemyBullets[i].Update();
+
+
+
+                if (enemyBullets[i].getSprite().getPosX()<10)
+                {
+          
+                     enemyBullets.Remove(enemyBullets[i]);
+                 
+                }
+            }
+
+            for (int i = 0; i < enemyShipList.Count; i++)
+            {
+                enemyShipList[i].Update();
+                if (enemyShipList[i].canShoot)
+                {
+                    Bullet bullet = new Bullet(Assets.texEnemyBullet, new Vector2(enemyShipList[i].getSprite().getPosX(), enemyShipList[i].getSprite().getPosY() + enemyShipList[i].getSprite().getHeight() / 2), -4);
+                    enemyBullets.Add(bullet);
+                    enemyShipList[i].resetCanShoot();
+                }
+
+                if (player.getSprite().collision(enemyShipList[i].getSprite()))
+                {
+
+                    if (enemyShipList.Any())
+                    {
+                        enemyShipList[i].dead = true;
+                    }
+
+                    player.takeDamage(1);
+                }
+
+                for (int j = 0; j < bullets.Count; j++) {
+                    if (bullets[j].getSprite().collision(enemyShipList[i].getSprite()))
+                    {
+                        Assets.soundExplosion.Play();
+                        enemyShipList[i].dead = true;
+                        bullets.Remove(bullets[j]);
+
+
+                    }
+                }  
+
+            }
+
+
+
         }
 
         public override void Draw(GameTime gameTime)
         {
             // Set the background, incase different
-            graphicsDevice.Clear(Assets.LvlOneColour);
-
+            graphicsDevice.Clear(Color.Black);
+            
             spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive);
+            player.Draw(spriteBatch);
+            if (showbb) player.getSprite().getBB();
 
-            Levels.handleLevelBasicDrawing(spriteBatch, -1);
+            for (int i = 0; i < enemyShipList.Count; i++)
+            {
+                enemyShipList[i].Draw(spriteBatch);
+            }
+            for (int i = 0; i < bullets.Count; i++)
+            {
+                bullets[i].Draw(spriteBatch);
+        
+            }
+
+            for (int i = 0; i < enemyBullets.Count; i++)
+            {
+                enemyBullets[i].Draw(spriteBatch);
+            }
 
             spriteBatch.End();
         }
@@ -84,6 +195,7 @@ namespace SpaceShoota
 
     class LevelTwo : RC_GameStateParent
     {
+        
 
         public override void InitializeLevel(GraphicsDevice g, SpriteBatch s, ContentManager c, RC_GameStateManager lm)
         {
@@ -91,9 +203,9 @@ namespace SpaceShoota
             base.InitializeLevel(g, s, c, lm);
         }
 
-        public override void EnterLevel(int fromLevelNum)
+        public override void LoadContent()
         {
-            Assets.currentLevel = 1;
+
         }
 
         public override void Update(GameTime gameTime)
@@ -105,7 +217,7 @@ namespace SpaceShoota
                 gameStateManager.pushLevel(3);
 
             // Update our level with modified variables pertaining to our play level
-            Levels.handleLevelUpdate(gameTime, gameStateManager, 2);
+            
 
         }
 
@@ -116,7 +228,7 @@ namespace SpaceShoota
 
             spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive);
 
-            Levels.handleLevelBasicDrawing(spriteBatch, -1);
+           
 
             spriteBatch.End();
         }
@@ -157,7 +269,6 @@ namespace SpaceShoota
             sExit = new Sprite3(true, Assets.texExit, 550, 300); sExit.setWidthHeight(200, 80);
 
 
-           
 
         }
 
@@ -207,7 +318,7 @@ namespace SpaceShoota
                 Utility.buttonClickSound();
                 Assets.closeGame = true;
             }
-            Levels.handleLevelUpdate(gameTime, gameStateManager, 0);
+            
 
         }
 
@@ -235,17 +346,12 @@ namespace SpaceShoota
 
         }
 
-        public override void EnterLevel(int fromLevelNum)
-        {
-            int currLevel = gameStateManager.getCurrentLevelNum();
-
-        }
 
         public override void Update(GameTime gameTime)
         {
             Input.Update();
 
-            if (Input.KeyPressed(Keys.Space))
+            if (Input.KeyPressed(Keys.Delete))
                 gameStateManager.popLevel();
         }
 
@@ -253,7 +359,6 @@ namespace SpaceShoota
         {
             graphicsDevice.Clear(Assets.PauseScreenColour);
 
-            //Game1.levelManager.prevStatePlayLevel.Draw(gameTime);
 
             spriteBatch.Begin();
 
@@ -292,8 +397,6 @@ namespace SpaceShoota
         {
             graphicsDevice.Clear(Assets.HelpScreenColour);
 
-            //Game1.levelManager.prevStatePlayLevel.Draw(gameTime);
-
             spriteBatch.Begin();
 
 
@@ -308,43 +411,25 @@ namespace SpaceShoota
     class LevelGameOver : RC_GameStateParent
     {
 
-        private int timeWaitTicks = 50;
-        private int timeWaitCurrent = 0;
 
-        public override void EnterLevel(int fromLevelNum)
-        {
-            timeWaitCurrent = timeWaitTicks;
-            
-
-            Assets.currentLevel = 0;
-        }
 
         public override void Update(GameTime gameTime)
         {
             Input.Update();
 
-            if (timeWaitCurrent <= 0)
-            {
 
-                if (Input.anyPressed())
-                {
-                    gameStateManager.setLevel(4);
-                }
-            }
+            //if (Input.anyPressed())
+            //{
+            //    gameStateManager.setLevel(4);
+            //}
 
-
-            if (timeWaitCurrent > 0)
-            {
-                timeWaitCurrent--;
-            }
         }
 
         public override void Draw(GameTime gameTime)
         {
-            graphicsDevice.Clear(Assets.GameOverScreenColour);
+            graphicsDevice.Clear(Color.White);
 
             spriteBatch.Begin();
-
 
             spriteBatch.End();
         }

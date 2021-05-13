@@ -14,6 +14,7 @@ namespace SpaceShoota
         //boolean
         public static bool closeGame;
 
+
         public static int score = 0;
         public static int currentLevel = 0;
 
@@ -23,6 +24,11 @@ namespace SpaceShoota
         public static Texture2D texMenu;
         public static Texture2D texExit;
         public static Texture2D texBack;
+        public static Texture2D texShip;
+        public static Texture2D texEnemyGunship;
+        public static Texture2D texPlayerBullet;
+        public static Texture2D texEnemyBullet;
+
 
         // Fonts
         public static SpriteFont fonty;
@@ -42,6 +48,9 @@ namespace SpaceShoota
         public static SoundEffect soundSelect;
         public static Song mainMusic;
         public static Song helpMusic;
+        public static SoundEffect soundLaser;
+        public static SoundEffect soundExplosion;
+        public static SoundEffect soundPlayerHit;
 
         public static void LoadContent(ContentManager Content)
         {
@@ -55,6 +64,10 @@ namespace SpaceShoota
             texContinue = Content.Load<Texture2D>("Continue");
             texExit = Content.Load<Texture2D>("Exit");
             texBack = Content.Load<Texture2D>("Back");
+            texShip = Content.Load<Texture2D>("SShip10");
+            texEnemyGunship = Content.Load<Texture2D>("enemy-ship");
+            texPlayerBullet = Content.Load<Texture2D>("player-bullet");
+            texEnemyBullet = Content.Load<Texture2D>("enemy-bullet");
 
             // Load Colours
             StartScreenColour = new Color(216, 182, 227);
@@ -71,6 +84,9 @@ namespace SpaceShoota
 
 
             soundSelect = Content.Load<SoundEffect>("buttonClick");
+            soundLaser = Content.Load<SoundEffect>("sndLaser");
+            soundExplosion = Content.Load<SoundEffect>("sndExplode");
+            soundPlayerHit = Content.Load<SoundEffect>("impact");
 
             mainMusic = Content.Load<Song>("bg-music");
             helpMusic = Content.Load<Song>("help-music");
